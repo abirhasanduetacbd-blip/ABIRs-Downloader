@@ -55,6 +55,20 @@ def index():
         return send_file(index_path)
     return "ABIR's Downloader Server is running. Please ensure index.html is present in the application directory."
 
+@app.route("/manifest.json", methods=["GET"])
+def manifest():
+    manifest_path = os.path.join(BASE_DIR, "manifest.json")
+    if os.path.exists(manifest_path):
+        return send_file(manifest_path, mimetype="application/json")
+    return jsonify({"error": "Manifest not found"}), 404
+
+@app.route("/sw.js", methods=["GET"])
+def service_worker():
+    sw_path = os.path.join(BASE_DIR, "sw.js")
+    if os.path.exists(sw_path):
+        return send_file(sw_path, mimetype="application/javascript")
+    return jsonify({"error": "Service worker not found"}), 404
+
 @app.route("/health", methods=["GET"])
 def health():
     return jsonify({
@@ -62,6 +76,7 @@ def health():
         "name": "ABIR's Downloader Backend",
         "version": "3.0.0"
     })
+
 
 @app.route("/api/analyze", methods=["POST"])
 @app.route("/formats", methods=["POST"])

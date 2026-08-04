@@ -5,7 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ABIR's Downloader - Fast & Free Media Downloader</title>
   <meta name="description" content="Download HD Videos and MP3 Audio from YouTube, Facebook, Instagram, TikTok, and Spotify instantly.">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#6366f1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
+
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
@@ -545,8 +548,14 @@
 
     let currentMediaData = null;
 
+    // Register Service Worker for PWA compliance
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js").catch(() => {});
+    }
+
     // Parse shared URL query parameter from Android Intent (?url=...)
     window.addEventListener("DOMContentLoaded", () => {
+
       const params = new URLSearchParams(window.location.search);
       const sharedUrl = params.get("url") || params.get("text");
       if (sharedUrl) {
