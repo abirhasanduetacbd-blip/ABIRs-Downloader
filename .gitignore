@@ -1,0 +1,7 @@
+downloads/
+dist/
+build/
+*.pyc
+__pycache__/
+.idea/
+*.apk

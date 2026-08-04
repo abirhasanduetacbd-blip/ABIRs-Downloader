@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ABIRs Downloader Mobile</title>
+  <link rel="manifest" href="/android_app/web_app/manifest.json">
+  <meta name="theme-color" content="#6366f1">
+
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: #151c2c;
+      --primary: #6366f1;
+      --accent: #ec4899;
+      --success: #10b981;
+      --danger: #ef4444;
+      --text: #f8fafc;
+      --subtext: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 16px;
+    }
+    .container {
+      width: 100%;
+      max-width: 480px;
+    }
+    .header {
+      text-align: center;
+      margin-top: 10px;
+      margin-bottom: 24px;
+    }
+    .header h1 {
+      font-size: 26px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #818cf8, #ec4899);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 6px;
+    }
+    .header p {
+      font-size: 13px;
+      color: var(--subtext);
+    }
+    .card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid #1e293b;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+      margin-bottom: 16px;
+    }
+    .input-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--subtext);
+      margin-bottom: 8px;
+      display: block;
+    }
+    input, select {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: #0f172a;
+      border: 1px solid #334155;
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+      transition: all 0.2s;
+      margin-bottom: 14px;
+    }
+    input:focus, select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+    }
+    .btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white;
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+    }
+    .btn-primary:active {
+      transform: scale(0.98);
+    }
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    #formatCard {
+      display: none;
+    }
+    .status-box {
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      text-align: center;
+      margin-top: 14px;
+      display: none;
+      word-break: break-word;
+    }
+    .status-box.info { background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3); }
+    .status-box.ok { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .status-box.err { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+    .server-setting {
+      margin-top: 20px;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 10px;
+      border: 1px solid #1e293b;
+    }
+    .server-setting summary {
+      font-size: 12px;
+      color: var(--subtext);
+      cursor: pointer;
+    }
+    .server-setting-body {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>ABIRs Downloader</h1>
+      <p>Download Videos & Audio on Android</p>
+    </div>
+
+    <div class="card">
+      <span class="input-label">Media Link (YouTube, FB, IG, Spotify)</span>
+      <input type="text" id="urlInput" placeholder="Paste link or Share from app...">
+      <button id="searchBtn" class="btn btn-primary">🔍 Fetch Download Formats</button>
+      <div id="statusBox" class="status-box"></div>
+    </div>
+
+    <div id="formatCard" class="card">
+      <span class="input-label">Choose Quality / Format</span>
+      <select id="formatSelect"></select>
+      <button id="downloadBtn" class="btn btn-primary">⚡ Download File Now</button>
+    </div>
+
+    <details class="server-setting">
+      <summary>⚙️ Server Settings</summary>
+      <div class="server-setting-body">
+        <span class="input-label">Backend Server URL</span>
+        <input type="text" id="serverUrlInput" placeholder="http://10.0.2.2:9191 or Cloud URL">
+        <button id="saveServerBtn" class="btn" style="background:#334155; color:white; padding:10px;">Save Server URL</button>
+      </div>
+    </details>
+  </div>
+
+  <script>
+    // For Google Play Store release: Replace this URL with your cloud server (e.g., https://abirsdownloader.onrender.com)
+    const DEFAULT_CLOUD_URL = "https://abirsdownloader.onrender.com";
+
+    let SERVER_URL = localStorage.getItem("serverUrl") || 
+      (DEFAULT_CLOUD_URL !== "" ? DEFAULT_CLOUD_URL : 
+      (window.location.origin.startsWith("http") && !window.location.origin.includes("file://") ? window.location.origin : "http://127.0.0.1:9191"));
+    
+    document.getElementById("serverUrlInput").value = SERVER_URL;
+
+
+
+    document.getElementById("saveServerBtn").onclick = function() {
+      const val = document.getElementById("serverUrlInput").value.trim();
+      if (val) {
+        SERVER_URL = val.replace(/\/$/, "");
+        localStorage.setItem("serverUrl", SERVER_URL);
+        showStatus("Server URL updated!", "ok");
+      }
+    };
+
+    // Parse shared URL from Android Intent query parameter (?url=... or ?text=...)
+    window.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      const sharedUrl = params.get("url") || params.get("text");
+      if (sharedUrl) {
+        // Extract URL from shared text if contains extraneous text
+        const urlMatch = sharedUrl.match(/(https?:\/\/[^\s]+)/);
+        const cleanUrl = urlMatch ? urlMatch[0] : sharedUrl;
+        document.getElementById("urlInput").value = cleanUrl;
+        fetchFormats(cleanUrl);
+      }
+    });
+
+    document.getElementById("searchBtn").onclick = () => {
+      const url = document.getElementById("urlInput").value.trim();
+      if (url) fetchFormats(url);
+    };
+
+    async function fetchFormats(url) {
+      showStatus("Analyzing media formats...", "info");
+      document.getElementById("formatCard").style.display = "none";
+
+      try {
+        const res = await fetch(`${SERVER_URL}/formats`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url })
+        });
+        const data = await res.json();
+
+        if (data.success && data.formats && data.formats.length) {
+          const sel = document.getElementById("formatSelect");
+          sel.innerHTML = "";
+          data.formats.forEach(f => {
+            const opt = document.createElement("option");
+            opt.value = JSON.stringify({ id: f.id, type: f.type });
+            opt.textContent = f.label;
+            sel.appendChild(opt);
+          });
+          document.getElementById("formatCard").style.display = "block";
+          showStatus("Title: " + (data.title || "Ready to download"), "ok");
+        } else {
+          showStatus(data.error || "No downloadable formats found", "err");
+        }
+      } catch (e) {
+        showStatus("Cannot connect to backend server. Check Server Settings.", "err");
+      }
+    }
+
+    document.getElementById("downloadBtn").onclick = async () => {
+      const url = document.getElementById("urlInput").value.trim();
+      const selVal = JSON.parse(document.getElementById("formatSelect").value);
+      const btn = document.getElementById("downloadBtn");
+
+      btn.disabled = true;
+      btn.textContent = "⌛ Processing Download...";
+      showStatus("Downloading file... Please wait.", "info");
+
+      try {
+        const downloadApi = `${SERVER_URL}/download?url=${encodeURIComponent(url)}&format_id=${encodeURIComponent(selVal.id)}&type=${selVal.type}`;
+        
+        // Direct browser download
+        window.location.href = downloadApi;
+
+        setTimeout(() => {
+          btn.disabled = false;
+          btn.textContent = "⚡ Download File Now";
+          showStatus("Download started in browser!", "ok");
+        }, 3000);
+      } catch (e) {
+        btn.disabled = false;
+        btn.textContent = "⚡ Download File Now";
+        showStatus("Error: " + e.message, "err");
+      }
+    };
+
+    function showStatus(msg, type) {
+      const box = document.getElementById("statusBox");
+      box.textContent = msg;
+      box.className = "status-box " + type;
+      box.style.display = "block";
+    }
+  </script>
+</body>
+</html>
