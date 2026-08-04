@@ -20,7 +20,7 @@ public class MainActivity extends Activity {
     private WebView webView;
 
     // REPLACE THIS WITH YOUR DEPLOYED CLOUD BACKEND URL (e.g. https://abir-downloader.onrender.com)
-    private static final String CLOUD_SERVER_URL = "https://abir-downloader.onrender.com";
+    private static final String CLOUD_SERVER_URL = "https://abir-downloader-backend.onrender.com";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
