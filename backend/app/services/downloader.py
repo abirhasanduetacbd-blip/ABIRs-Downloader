@@ -2,7 +2,7 @@ import os
 import uuid
 import time
 import yt_dlp
-from typing import Tuple, Dict, Any
+from typing import Tuple, Dict, Any, Optional, Callable
 from backend.app.core.config import get_config
 from backend.app.utils.sanitizer import safe_name
 from backend.app.services.spotify import resolve_spotify_to_youtube
@@ -26,8 +26,8 @@ def cleanup_old_files(max_age_seconds: int = 600) -> int:
         pass
     return deleted_count
 
-def process_download(url: str, fmt: str = "best", typ: str = "video") -> Tuple[str, str, str]:
-    """Executes yt-dlp media download and returns (file_path, download_filename, mimetype)."""
+def process_download(url: str, fmt: str = "best", typ: str = "video", progress_callback: Optional[Callable[[Dict[str, Any]], None]] = None) -> Tuple[str, str, str, Dict[str, Any]]:
+    """Executes yt-dlp media download and returns (file_path, download_filename, mimetype, info_dict)."""
     cleanup_old_files(config.MAX_FILE_AGE)
 
     # Handle Spotify link resolution
@@ -39,12 +39,17 @@ def process_download(url: str, fmt: str = "best", typ: str = "video") -> Tuple[s
     output_template = os.path.join(config.DOWNLOAD_DIR, f"{uid}_%(title)s.%(ext)s")
     hdrs = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
 
+    progress_hooks = []
+    if progress_callback:
+        progress_hooks.append(progress_callback)
+
     if typ == "audio":
         opts = {
             "outtmpl": output_template,
             "format": "bestaudio/best",
             "quiet": True,
             "http_headers": hdrs,
+            "progress_hooks": progress_hooks,
             "postprocessors": [{
                 "key": "FFmpegExtractAudio",
                 "preferredcodec": "mp3",
@@ -62,7 +67,8 @@ def process_download(url: str, fmt: str = "best", typ: str = "video") -> Tuple[s
             "format": fstr,
             "quiet": True,
             "merge_output_format": "mp4",
-            "http_headers": hdrs
+            "http_headers": hdrs,
+            "progress_hooks": progress_hooks
         }
 
     with yt_dlp.YoutubeDL(opts) as ydl:
@@ -78,6 +84,6 @@ def process_download(url: str, fmt: str = "best", typ: str = "video") -> Tuple[s
                 ext = ".mp3" if typ == "audio" else ".mp4"
                 download_filename = f"{clean_title}{ext}"
                 mimetype = "audio/mpeg" if typ == "audio" else "video/mp4"
-                return fp, download_filename, mimetype
+                return fp, download_filename, mimetype, info
 
     raise FileNotFoundError("Downloaded file not found on disk after extraction")
