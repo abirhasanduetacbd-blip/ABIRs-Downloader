@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>ABIRs Downloader Settings</title>
+  <style>
+    body {
+      background: #0f172a;
+      color: #f8fafc;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      padding: 30px;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    h2 { color: #818cf8; margin-bottom: 20px; }
+    .card {
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid #334155;
+    }
+    label { display: block; margin-bottom: 8px; font-size: 13px; color: #94a3b8; }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      background: #0f172a;
+      border: 1px solid #334155;
+      color: #fff;
+      font-size: 14px;
+      margin-bottom: 15px;
+      box-sizing: border-box;
+    }
+    .btn {
+      background: #6366f1;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .btn:hover { background: #4f46e5; }
+    #msg { margin-top: 15px; font-size: 13px; color: #34d399; display: none; }
+  </style>
+</head>
+<body>
+  <h2>ABIRs Downloader Settings</h2>
+  <div class="card">
+    <label for="serverUrl">Backend Server Endpoint URL:</label>
+    <input type="text" id="serverUrl" placeholder="http://127.0.0.1:9191">
+    <button id="saveBtn" class="btn">Save Settings</button>
+    <div id="msg">Settings Saved Successfully!</div>
+  </div>
+  <script src="options.js"></script>
+</body>
+</html>

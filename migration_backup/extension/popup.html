@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ABIRs Downloader</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: rgba(30, 41, 59, 0.8);
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --accent: #ec4899;
+      --success: #10b981;
+      --danger: #ef4444;
+      --text: #f8fafc;
+      --subtext: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+    body {
+      width: 320px;
+      background: var(--bg);
+      color: var(--text);
+      padding: 16px;
+      user-select: none;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 12px;
+    }
+    .header h2 {
+      font-size: 18px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #818cf8, #ec4899);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 2px;
+    }
+    .header p {
+      font-size: 11px;
+      color: var(--subtext);
+    }
+    .status-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-bottom: 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--danger);
+      box-shadow: 0 0 8px var(--danger);
+    }
+    .status-badge.online .dot {
+      background: var(--success);
+      box-shadow: 0 0 8px var(--success);
+    }
+    .input-group {
+      margin-bottom: 12px;
+    }
+    .input-group label {
+      display: block;
+      font-size: 11px;
+      color: var(--subtext);
+      margin-bottom: 4px;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: var(--text);
+      font-size: 12px;
+      outline: none;
+      transition: all 0.2s;
+    }
+    input:focus, select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+    }
+    .btn {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white;
+    }
+    .btn-primary:hover {
+      opacity: 0.95;
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      background: #334155;
+      color: var(--text);
+    }
+    .btn-secondary:hover {
+      background: #475569;
+    }
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+    #box {
+      display: none;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #334155;
+    }
+    .msg {
+      font-size: 11px;
+      padding: 8px 10px;
+      border-radius: 6px;
+      margin-top: 8px;
+      text-align: center;
+      display: none;
+      word-break: break-word;
+    }
+    .msg.info { background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3); }
+    .msg.ok { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .msg.err { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+      font-size: 10px;
+      color: var(--subtext);
+    }
+    .footer a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h2>ABIRs Downloader</h2>
+    <p>YouTube • Facebook • Instagram • Spotify</p>
+  </div>
+
+  <div id="statusBadge" class="status-badge">
+    <span class="dot"></span>
+    <span id="statusText">Connecting to server...</span>
+  </div>
+
+  <div class="input-group">
+    <button id="sbtn" class="btn btn-primary" disabled>🔍 Analyze Active Tab</button>
+  </div>
+
+  <div class="input-group">
+    <label for="urlInput">Or enter media URL:</label>
+    <input type="text" id="urlInput" placeholder="Paste YouTube / Spotify link...">
+  </div>
+
+  <div id="box">
+    <div class="input-group">
+      <label for="sel">Select Quality / Format:</label>
+      <select id="sel"></select>
+    </div>
+    <button id="dbtn" class="btn btn-primary">⚡ Download Media</button>
+  </div>
+
+  <div id="statusMsg" class="msg"></div>
+
+  <div class="footer">
+    <span>v2.0 Ready App</span>
+    <a href="#" id="openOptions">⚙️ Settings</a>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,13 +1,33 @@
-downloads/
-dist/
-build/
-*.pyc
+# Byte-compiled / optimized / DLL files
 __pycache__/
+*.py[cod]
+*$py.class
+
+# Environment & Virtual Environments
+.env
+.venv/
+venv/
+ENV/
+env/
+
+# Build & Distribution Artifacts
+build/
+dist/
+*.spec.user
+
+# Application Runtime Output
+downloads/
+logs/
+backend/logs/
+*.log
+
+# IDE & Editor Settings
 .idea/
+.vscode/
+
+# Android Build Artifacts
 .gradle/
-app/build/
+android/app/build/
+android/.gradle/
 *.apk
 *.aab
-*.spec
-.github/
-

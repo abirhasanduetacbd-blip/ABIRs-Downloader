@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "ABIRs Downloader",
+  "version": "2.0",
+  "description": "Download videos & audio from YouTube, Facebook, Instagram, Spotify",
+  "permissions": ["activeTab", "downloads", "storage"],
+  "host_permissions": ["<all_urls>"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "ABIRs Downloader"
+  },
+  "options_page": "options.html"
+}
