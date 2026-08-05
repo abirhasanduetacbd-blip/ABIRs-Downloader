@@ -15,11 +15,14 @@ build/
 dist/
 *.spec.user
 
-# Application Runtime Output
+# Application Runtime Output & SQLite Databases
 downloads/
 logs/
 backend/logs/
 *.log
+*.db
+*.db-wal
+*.db-shm
 
 # IDE & Editor Settings
 .idea/
